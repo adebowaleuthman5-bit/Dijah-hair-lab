@@ -1,0 +1,58 @@
+import { AdminCategory } from '@/types';
+
+export const adminCategories: AdminCategory[] = [
+  {
+    id: 'cat-womens',
+    slug: 'womens-styling',
+    label: "Women's Styles",
+    description: 'Braids, weaves, updos and silk presses — styled for every occasion.',
+    image: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=600&q=80',
+    order: 1,
+    active: true,
+  },
+  {
+    id: 'cat-mens',
+    slug: 'mens-styling',
+    label: "Men's Styles",
+    description: 'Precision cuts and grooming for the modern gentleman.',
+    image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=600&q=80',
+    order: 2,
+    active: true,
+  },
+  {
+    id: 'cat-dreadlocking',
+    slug: 'dreadlocking',
+    label: 'Dreadlocks',
+    description: 'Loc starts, retwists and maintenance built for the long run.',
+    image: 'https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&w=600&q=80',
+    order: 3,
+    active: true,
+  },
+  {
+    id: 'cat-weaving',
+    slug: 'hair-weaving',
+    label: 'Hair Weaving',
+    description: 'Seamless sew-ins, frontals and full luxury installs.',
+    image: 'https://images.unsplash.com/photo-1519699047748-de8e457a634e?auto=format&fit=crop&w=600&q=80',
+    order: 4,
+    active: true,
+  },
+  {
+    id: 'cat-home',
+    slug: 'home-service',
+    label: 'Home Service',
+    description: 'The full studio experience, delivered to your door.',
+    image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=600&q=80',
+    order: 5,
+    active: true,
+  },
+  {
+    id: 'cat-custom',
+    slug: 'custom-styling',
+    label: 'Custom Styling',
+    description: 'Bespoke looks built from your reference and vision.',
+    image: 'https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?auto=format&fit=crop&w=600&q=80',
+    order: 6,
+    active: true,
+  },
+];
