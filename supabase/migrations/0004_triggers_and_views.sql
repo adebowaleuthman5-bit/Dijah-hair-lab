@@ -42,7 +42,16 @@ create trigger trg_bookings_reference
 -- email, counting bookings, tracking last booking date). Doing this in
 -- SQL means the admin dashboard can query one view instead of pulling
 -- every booking row and aggregating in JavaScript.
-create view customer_directory as
+-- security_invoker = on makes this view run with the QUERYING user's
+-- permissions instead of the view creator's — without it, Postgres views
+-- default to running as their owner, which can silently bypass the RLS
+-- policies on the tables they read from (bookings, customers here).
+-- With it on: a customer querying this view only ever sees rows their
+-- own RLS policies on bookings/customers would let them see anyway;
+-- is_admin() in those same policies is what lets admins see everyone.
+create view customer_directory
+with (security_invoker = on)
+as
 select
   coalesce(c.id::text, lower(b.customer_email)) as directory_id,
   b.customer_email as email,

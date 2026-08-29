@@ -147,6 +147,49 @@ function mapCategoryRow(row: any): AdminCategory {
 
 // ---------- Gallery ----------
 
+const GALLERY_MAX_FILE_MB = 5;
+const GALLERY_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+// Uploads a file to the "gallery" Storage bucket (see
+// supabase/migrations/0010_storage.sql for the bucket + policies) and
+// returns its public URL, ready to store as a gallery_images.url value.
+// Returns an error string instead of throwing so the caller can show it
+// inline without a try/catch.
+export async function uploadGalleryImageFile(file: File): Promise<{ url: string | null; error?: string }> {
+  if (!isSupabaseConfigured || !supabase) {
+    return { url: null, error: 'Supabase is not configured — connect a project to enable real uploads.' };
+  }
+  if (!GALLERY_ALLOWED_TYPES.includes(file.type)) {
+    return { url: null, error: 'Please upload a JPG, PNG or WEBP image.' };
+  }
+  if (file.size > GALLERY_MAX_FILE_MB * 1024 * 1024) {
+    return { url: null, error: `File must be under ${GALLERY_MAX_FILE_MB}MB.` };
+  }
+
+  const ext = file.name.split('.').pop() ?? 'jpg';
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+  const { error: uploadError } = await supabase.storage.from('gallery').upload(path, file, {
+    cacheControl: '3600',
+    upsert: false,
+  });
+  if (uploadError) return { url: null, error: uploadError.message };
+
+  const { data } = supabase.storage.from('gallery').getPublicUrl(path);
+  return { url: data.publicUrl };
+}
+
+export async function deleteGalleryImageFile(url: string): Promise<void> {
+  if (!isSupabaseConfigured || !supabase) return;
+  // Only attempt to remove files that actually live in our own bucket —
+  // seed/demo rows point at external Unsplash URLs, which aren't ours to delete.
+  const marker = '/storage/v1/object/public/gallery/';
+  const idx = url.indexOf(marker);
+  if (idx === -1) return;
+  const path = url.slice(idx + marker.length);
+  await supabase.storage.from('gallery').remove([path]);
+}
+
 export async function fetchGalleryImages(): Promise<GalleryImage[] | null> {
   if (!isSupabaseConfigured || !supabase) return null;
   const { data, error } = await supabase.from('gallery_images').select('*').order('sort_order');
