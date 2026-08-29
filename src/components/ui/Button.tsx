@@ -27,7 +27,7 @@ const base =
 interface CommonProps {
   variant?: Variant;
   size?: Size;
-  children: ReactNode;
+  children?: ReactNode;
   icon?: ReactNode;
   className?: string;
 }
