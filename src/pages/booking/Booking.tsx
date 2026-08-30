@@ -24,7 +24,7 @@ const TOTAL_STEPS = 7; // confirmation is a separate final screen, not part of t
 
 const emptyCustomer: BookingCustomerDetails = { fullName: '', phone: '', email: '' };
 
-export default function Bookingpage() {
+export default function BookingPage() {
   const { draft, setDraft, resetDraft } = useBookingDraft();
   const { isAuthenticated, customer } = useAuth();
   const { addBooking } = useCustomerData();
