@@ -4,6 +4,7 @@ import PageBanner from '@/components/public/PageBanner';
 import Button from '@/components/ui/Button';
 import { useAuth } from '@/hooks/useAuth';
 import { demoCustomer } from '@/data/customers';
+import { isSupabaseConfigured } from '@/lib/supabaseClient';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -33,10 +34,12 @@ export default function Login() {
       <PageBanner eyebrow="Customer Account" title="Login" />
       <section className="container-lab flex justify-center py-16 lg:py-24">
         <div className="w-full max-w-md">
-          <div className="mb-6 rounded-sm border border-gold-200 bg-gold-50 px-4 py-3 text-xs text-gold-700">
-            Demo mode — log in with <strong>{demoCustomer.email}</strong> (any password), or register
-            a new account below.
-          </div>
+          {!isSupabaseConfigured && (
+            <div className="mb-6 rounded-sm border border-gold-200 bg-gold-50 px-4 py-3 text-xs text-gold-700">
+              Demo mode — log in with <strong>{demoCustomer.email}</strong> (any password), or register
+              a new account below.
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <Field label="Email" type="email" value={email} onChange={setEmail} required />

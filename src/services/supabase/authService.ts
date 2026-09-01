@@ -107,6 +107,32 @@ export async function signOutCustomer(): Promise<void> {
   await supabase.auth.signOut();
 }
 
+// Sends a real password-reset email via Supabase Auth. The link inside it
+// brings the person back to /reset-password with a temporary recovery
+// session already attached (Supabase's client detects the token in the
+// URL automatically) — see pages/customer/ResetPassword.tsx, which is
+// where they actually set a new password.
+export async function requestPasswordReset(email: string): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured || !supabase) return { success: false, error: 'Supabase is not configured.' };
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/reset-password`,
+  });
+  // Supabase intentionally doesn't reveal whether the email exists (to
+  // avoid leaking which addresses have accounts) — a "success" here just
+  // means the request was accepted, not that an account was found.
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
+// Called from the /reset-password page once the person has followed the
+// email link and is in a valid recovery session.
+export async function updatePasswordAfterReset(newPassword: string): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured || !supabase) return { success: false, error: 'Supabase is not configured.' };
+
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
+  return error ? { success: false, error: error.message } : { success: true };
+}
+
 function mapCustomerRow(row: any): Customer {
   return {
     id: row.id,

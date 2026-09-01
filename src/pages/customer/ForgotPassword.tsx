@@ -3,15 +3,31 @@ import { Link } from 'react-router-dom';
 import { CheckCircle2 } from 'lucide-react';
 import PageBanner from '@/components/public/PageBanner';
 import Button from '@/components/ui/Button';
+import { isSupabaseConfigured } from '@/lib/supabaseClient';
+import { requestPasswordReset } from '@/services/supabase/authService';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
-    // Demo only — no email is actually sent.
+    setError(null);
+
+    if (isSupabaseConfigured) {
+      setLoading(true);
+      const result = await requestPasswordReset(email);
+      setLoading(false);
+      if (!result.success) {
+        setError(result.error ?? 'Something went wrong. Please try again.');
+        return;
+      }
+    }
+    // Demo mode: no backend to actually send anything, so this just shows
+    // the same confirmation screen a real request would produce.
     setSubmitted(true);
   };
 
@@ -27,6 +43,11 @@ export default function ForgotPassword() {
               <p className="text-sm text-ink-500">
                 If an account exists for {email}, a reset link has been sent.
               </p>
+              {!isSupabaseConfigured && (
+                <p className="text-xs text-gold-700">
+                  Demo mode — no real email is sent; this is just a preview of the flow.
+                </p>
+              )}
               <Link to="/login" className="mt-2 text-xs font-semibold uppercase tracking-wide text-rose-600">
                 Back to Login
               </Link>
@@ -47,8 +68,9 @@ export default function ForgotPassword() {
                     className="rounded-sm border border-ink/15 px-4 py-3 text-sm focus:border-gold-500"
                   />
                 </div>
-                <Button type="submit" className="w-full">
-                  Send Reset Link
+                {error && <p className="text-xs text-rose-600">{error}</p>}
+                <Button type="submit" disabled={loading} className="w-full">
+                  {loading ? 'Sending...' : 'Send Reset Link'}
                 </Button>
               </form>
               <p className="mt-6 text-center text-sm text-ink-500">

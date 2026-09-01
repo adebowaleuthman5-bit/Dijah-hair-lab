@@ -30,6 +30,7 @@ import Booking from '@/pages/booking/Booking';
 import Login from '@/pages/customer/Login';
 import Register from '@/pages/customer/Register';
 import ForgotPassword from '@/pages/customer/ForgotPassword';
+import ResetPassword from '@/pages/customer/ResetPassword';
 import Overview from '@/pages/customer/Overview';
 import BookingHistory from '@/pages/customer/BookingHistory';
 import WishlistPage from '@/pages/customer/WishlistPage';
@@ -89,6 +90,7 @@ export default function App() {
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
 
                         {/* Customer account — protected */}
                         <Route

@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import { isSupabaseConfigured } from '@/lib/supabaseClient';
 
 export default function AdminLogin() {
   const { login } = useAdminAuth();
@@ -66,9 +67,11 @@ export default function AdminLogin() {
           </Button>
         </form>
 
-        <div className="mt-6 rounded-sm bg-cream-100 p-3 text-center text-[11px] text-ink-500">
-          Demo access: <span className="font-semibold">admin@dijahhairlab.com</span> — any password
-        </div>
+        {!isSupabaseConfigured && (
+          <div className="mt-6 rounded-sm bg-cream-100 p-3 text-center text-[11px] text-ink-500">
+            Demo access: <span className="font-semibold">admin@dijahhairlab.com</span> — any password
+          </div>
+        )}
 
         <Link to="/" className="mt-4 block text-center text-xs font-semibold uppercase tracking-wide text-ink-500 hover:text-rose-600">
           Back to Website
